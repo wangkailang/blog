@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Office Skills delivery cover</title>
+  <desc id="desc">An editorial cover about verifiable Office document delivery.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f7f8fb"/>
+      <stop offset="0.48" stop-color="#eef4f1"/>
+      <stop offset="1" stop-color="#f5f0e8"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#eef1f5"/>
+    </linearGradient>
+    <linearGradient id="screen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101827"/>
+      <stop offset="1" stop-color="#253045"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="22" stdDeviation="24" flood-color="#152033" flood-opacity="0.16"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <path d="M0 710 C280 610 418 760 692 674 C948 594 1064 458 1600 535 L1600 900 L0 900 Z" fill="#dce7e0" opacity="0.72"/>
+  <path d="M0 774 C310 715 520 832 792 748 C1050 668 1248 646 1600 700 L1600 900 L0 900 Z" fill="#ebe1d1" opacity="0.68"/>
+
+  <g opacity="0.42" stroke="#aeb9c5" stroke-width="1">
+    <path d="M160 160 H1440"/>
+    <path d="M160 260 H1440"/>
+    <path d="M160 360 H1440"/>
+    <path d="M160 460 H1440"/>
+    <path d="M160 560 H1440"/>
+    <path d="M160 660 H1440"/>
+    <path d="M260 80 V760"/>
+    <path d="M420 80 V760"/>
+    <path d="M580 80 V760"/>
+    <path d="M740 80 V760"/>
+    <path d="M900 80 V760"/>
+    <path d="M1060 80 V760"/>
+    <path d="M1220 80 V760"/>
+    <path d="M1380 80 V760"/>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="238" y="170" width="480" height="560" rx="18" fill="url(#paper)" stroke="#cfd6dd"/>
+    <rect x="290" y="230" width="210" height="18" rx="9" fill="#1f2937"/>
+    <rect x="290" y="278" width="330" height="12" rx="6" fill="#9aa6b2"/>
+    <rect x="290" y="314" width="260" height="12" rx="6" fill="#b5bec8"/>
+    <rect x="290" y="394" width="330" height="178" rx="10" fill="#f8fafc" stroke="#cdd5df"/>
+    <path d="M314 522 L372 468 L424 505 L484 430 L594 538" fill="none" stroke="#2f7dd3" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+    <g fill="#c7d0db">
+      <rect x="290" y="616" width="330" height="12" rx="6"/>
+      <rect x="290" y="650" width="282" height="12" rx="6"/>
+    </g>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="520" y="112" width="560" height="662" rx="20" fill="url(#paper)" stroke="#cfd6dd"/>
+    <rect x="576" y="178" width="310" height="20" rx="10" fill="#111827"/>
+    <rect x="576" y="228" width="412" height="12" rx="6" fill="#9aa6b2"/>
+    <rect x="576" y="264" width="356" height="12" rx="6" fill="#b5bec8"/>
+    <g stroke="#cbd5df" stroke-width="2">
+      <rect x="576" y="342" width="396" height="210" rx="10" fill="#ffffff"/>
+      <path d="M576 394 H972 M576 446 H972 M576 498 H972"/>
+      <path d="M675 342 V552 M774 342 V552 M873 342 V552"/>
+    </g>
+    <g fill="#e6edf5">
+      <rect x="598" y="360" width="52" height="16" rx="8"/>
+      <rect x="697" y="360" width="52" height="16" rx="8"/>
+      <rect x="796" y="360" width="52" height="16" rx="8"/>
+      <rect x="895" y="360" width="52" height="16" rx="8"/>
+    </g>
+    <path d="M632 508 L704 458 L756 490 L848 408 L928 478" fill="none" stroke="#22a06b" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="576" y="612" width="312" height="12" rx="6" fill="#aeb8c4"/>
+    <rect x="576" y="648" width="250" height="12" rx="6" fill="#c3ccd6"/>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="925" y="198" width="438" height="500" rx="20" fill="url(#screen)" stroke="#344055"/>
+    <rect x="973" y="252" width="172" height="16" rx="8" fill="#e5e7eb"/>
+    <rect x="973" y="304" width="292" height="10" rx="5" fill="#65758c"/>
+    <rect x="973" y="332" width="246" height="10" rx="5" fill="#65758c"/>
+    <g transform="translate(1030 405)">
+      <circle cx="112" cy="112" r="106" fill="#153727" stroke="#5de0a2" stroke-width="12"/>
+      <path d="M62 116 L99 154 L166 76" fill="none" stroke="#b9ffda" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <rect x="973" y="622" width="230" height="12" rx="6" fill="#7c8aa0"/>
+  </g>
+
+  <g>
+    <rect x="188" y="86" width="226" height="48" rx="24" fill="#111827"/>
+    <text x="301" y="117" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#ffffff">Office Skills</text>
+  </g>
+
+  <text x="188" y="808" font-family="Arial, Helvetica, sans-serif" font-size="62" font-weight="800" fill="#111827">能打开，不代表能交付</text>
+  <text x="190" y="854" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="600" fill="#526071">结构、公式、样式和高级功能，都要经得起验证</text>
+</svg>
