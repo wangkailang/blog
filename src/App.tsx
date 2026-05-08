@@ -1,4 +1,12 @@
-import { useEffect, useId, useMemo, useState, type ReactNode } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react'
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -19,6 +27,7 @@ import {
   useParams,
 } from 'react-router'
 import remarkGfm from 'remark-gfm'
+import rehypeSlug from 'rehype-slug'
 import { stripLeadingCoverImage } from './blog/normalize'
 import {
   BLOG_PUBLISH_LABEL,
@@ -29,12 +38,14 @@ import {
 import type { BlogPost } from './blog/types'
 
 type Theme = 'light' | 'dark'
+type TocItem = { id: string; text: string; level: number }
 type MermaidDiagramState =
   | { chart: string; status: 'loading' }
   | { chart: string; status: 'rendered'; svg: string }
   | { chart: string; status: 'failed' }
 
 const SITE_DISPLAY_NAME = 'Kilian'
+const HEADING_SCROLL_OFFSET = 24
 const SITE_GITHUB_PROFILE = {
   avatarUrl: 'https://github.com/wangkailang.png',
 }
@@ -383,6 +394,48 @@ function PostPage() {
 
   const { post } = postResult
 
+  return <PostArticle post={post} />
+}
+
+function PostArticle({ post }: { post: BlogPost }) {
+  const markdownRef = useRef<HTMLDivElement>(null)
+  const [tocItems, setTocItems] = useState<TocItem[]>([])
+
+  const refreshToc = useCallback(() => {
+    const root = markdownRef.current
+    if (!root) {
+      return
+    }
+
+    const headings = Array.from(root.querySelectorAll<HTMLHeadingElement>('h2, h3'))
+      .filter((heading) => heading.id)
+      .map((heading) => ({
+        id: heading.id,
+        text: heading.textContent?.trim() ?? '',
+        level: Number(heading.tagName.slice(1)),
+      }))
+
+    setTocItems((current) => {
+      if (current.length === headings.length && current.every((item, index) => item.id === headings[index]?.id)) {
+        return current
+      }
+      return headings
+    })
+  }, [])
+
+  useEffect(() => {
+    refreshToc()
+
+    const root = markdownRef.current
+    if (!root) {
+      return
+    }
+
+    const observer = new MutationObserver(() => refreshToc())
+    observer.observe(root, { childList: true, subtree: true })
+    return () => observer.disconnect()
+  }, [post.id, refreshToc])
+
   return (
     <article className="article-page">
       <Link className="back-link" to="/">
@@ -402,12 +455,17 @@ function PostPage() {
       ) : null}
 
       <div className="article-grid">
-        <div className="markdown-body">
-          <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+        <div className="markdown-body" ref={markdownRef}>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeSlug]}
+            components={markdownComponents}
+          >
             {stripLeadingCoverImage(post.body)}
           </ReactMarkdown>
         </div>
         <aside className="article-aside" aria-label="文章信息">
+          {tocItems.length >= 2 ? <TableOfContents items={tocItems} /> : null}
           <a className="source-link" href={post.url} target="_blank" rel="noreferrer">
             <ArrowUpRight size={18} /> 查看原始 Issue
           </a>
@@ -426,6 +484,76 @@ function PostPage() {
         </aside>
       </div>
     </article>
+  )
+}
+
+function TableOfContents({ items }: { items: TocItem[] }) {
+  const [activeId, setActiveId] = useState<string>(() => items[0]?.id ?? '')
+
+  useEffect(() => {
+    if (items.length === 0) {
+      return
+    }
+
+    const update = () => {
+      const trigger = Math.max(HEADING_SCROLL_OFFSET + 8, window.innerHeight * 0.35)
+      let current = items[0]?.id
+      for (const item of items) {
+        const el = document.getElementById(item.id)
+        if (!el) continue
+        if (el.getBoundingClientRect().top <= trigger) {
+          current = item.id
+        } else {
+          break
+        }
+      }
+      if (current) {
+        setActiveId(current)
+      }
+    }
+
+    update()
+    window.addEventListener('scroll', update, { passive: true })
+    window.addEventListener('resize', update)
+    return () => {
+      window.removeEventListener('scroll', update)
+      window.removeEventListener('resize', update)
+    }
+  }, [items])
+
+  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    event.preventDefault()
+    const target = document.getElementById(id)
+    if (!target) {
+      return
+    }
+
+    const top = target.getBoundingClientRect().top + window.scrollY - HEADING_SCROLL_OFFSET
+    window.scrollTo({ top, behavior: 'instant' })
+    history.replaceState(null, '', `#${id}`)
+    setActiveId(id)
+  }
+
+  return (
+    <nav className="article-toc" aria-label="文章目录">
+      <span className="article-toc-title">目录</span>
+      <ol>
+        {items.map((item) => (
+          <li
+            key={item.id}
+            className={item.level >= 3 ? 'article-toc-item article-toc-item--sub' : 'article-toc-item'}
+          >
+            <a
+              href={`#${item.id}`}
+              onClick={(event) => handleClick(event, item.id)}
+              className={activeId === item.id ? 'is-active' : undefined}
+            >
+              {item.text}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
   )
 }
 
