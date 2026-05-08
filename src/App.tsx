@@ -2,7 +2,6 @@ import {
   useCallback,
   useEffect,
   useId,
-  useMemo,
   useRef,
   useState,
   type ReactNode,
@@ -220,11 +219,6 @@ function SiteShell({ children, theme, onToggleTheme }: SiteShellProps) {
 function HomePage() {
   const [posts, setPosts] = useState<BlogPost[]>()
   const [error, setError] = useState<Error>()
-  const featuredPost = posts?.[0]
-  const recentPosts = useMemo(
-    () => posts?.filter((post) => post.slug !== featuredPost?.slug) ?? [],
-    [featuredPost?.slug, posts],
-  )
 
   useEffect(() => {
     let isCurrent = true
@@ -255,68 +249,36 @@ function HomePage() {
     return <LoadingState />
   }
 
-  if (!featuredPost) {
+  if (posts.length === 0) {
     return <EmptyState />
   }
 
   return (
-    <>
-      <section className="home-hero">
-        <div className="hero-copy">
-          <h1>{SITE_DISPLAY_NAME}</h1>
-          <p>
-            一块给想法落地的写作白板。文章从 GitHub Issues 实时同步，保留工程现场的边角、节奏和火花。
-          </p>
-          <div className="hero-stats" aria-label="博客统计">
-            <span>{posts.length} POSTS</span>
-            <span>GITHUB ISSUES</span>
-            <span>LABEL: {BLOG_PUBLISH_LABEL}</span>
-          </div>
+    <section className="home-page">
+      <header className="home-page-header">
+        <h1>{SITE_DISPLAY_NAME}</h1>
+        <p>一块给想法落地的写作白板。文章从 GitHub Issues 实时同步。</p>
+        <div className="home-page-stats" aria-label="博客统计">
+          <span>{posts.length} POSTS</span>
+          <span>GITHUB ISSUES</span>
+          <span>LABEL: {BLOG_PUBLISH_LABEL}</span>
         </div>
-        <FeaturedPost post={featuredPost} />
-      </section>
+      </header>
 
-      <section className="section-heading" aria-labelledby="recent-posts">
-        <div>
-          <h2 id="recent-posts">最新文章</h2>
-          <p>按发布时间排序，最新 issue 会撞进最前面。</p>
-        </div>
-      </section>
-
-      <section className="post-list" aria-label="文章列表">
-        {recentPosts.length ? (
-          recentPosts.map((post) => <PostRow key={post.slug} post={post} />)
-        ) : (
-          <PostRow post={featuredPost} />
-        )}
-      </section>
-    </>
-  )
-}
-
-function FeaturedPost({ post }: { post: BlogPost }) {
-  return (
-    <article className={post.coverImage ? 'featured-post' : 'featured-post featured-post--text-only'}>
-      {post.coverImage ? (
-        <Link className="featured-media" to={`/posts/${post.slug}`}>
-          <CoverImage src={post.coverImage} eager />
-        </Link>
-      ) : null}
-      <div className="featured-content">
-        <PostMeta post={post} compact />
-        <h2>
-          <Link to={`/posts/${post.slug}`}>{post.title}</Link>
-        </h2>
-        <p>{post.excerpt}</p>
-        <Link className="text-link" to={`/posts/${post.slug}`}>
-          阅读文章 <ArrowUpRight size={16} strokeWidth={2} />
-        </Link>
+      <div className="post-list" aria-label="文章列表">
+        {posts.map((post) => (
+          <PostRow key={post.slug} post={post} />
+        ))}
       </div>
-    </article>
+    </section>
   )
 }
 
 function PostRow({ post }: { post: BlogPost }) {
+  const visibleLabels = post.labels
+    .filter((label) => label.toLowerCase() !== BLOG_PUBLISH_LABEL.toLowerCase())
+    .slice(0, 3)
+
   return (
     <article className={post.coverImage ? 'post-row' : 'post-row post-row--text-only'}>
       <div className="post-row-main">
@@ -325,14 +287,13 @@ function PostRow({ post }: { post: BlogPost }) {
           <Link to={`/posts/${post.slug}`}>{post.title}</Link>
         </h3>
         <p>{post.excerpt}</p>
-        <div className="label-row" aria-label="文章标签">
-          {post.labels
-            .filter((label) => label.toLowerCase() !== BLOG_PUBLISH_LABEL.toLowerCase())
-            .slice(0, 3)
-            .map((label) => (
+        {visibleLabels.length ? (
+          <div className="label-row" aria-label="文章标签">
+            {visibleLabels.map((label) => (
               <span key={label}>{label}</span>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : null}
       </div>
       {post.coverImage ? (
         <Link className="post-row-media" to={`/posts/${post.slug}`} aria-label={post.title}>
