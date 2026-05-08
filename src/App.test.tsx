@@ -125,7 +125,9 @@ describe('App', () => {
 
     render(<App />)
 
-    expect(await screen.findByRole('img', { name: 'Mermaid diagram' })).toBeInTheDocument()
+    expect(
+      await screen.findByRole('button', { name: /放大查看 Mermaid 图/ }),
+    ).toBeInTheDocument()
     expect(screen.queryByText('graph TD')).not.toBeInTheDocument()
   })
 

@@ -13,9 +13,13 @@ import {
   ArrowUpRight,
   Calendar,
   Clock3,
+  Minus,
   Moon,
+  Plus,
+  RotateCcw,
   Sun,
   Tag,
+  X,
 } from 'lucide-react'
 import ReactMarkdown, { type Components } from 'react-markdown'
 import {
@@ -583,6 +587,8 @@ function MermaidDiagram({ chart }: { chart: string }) {
   const currentDiagram: MermaidDiagramState =
     diagram.chart === chart ? diagram : { chart, status: 'loading' }
 
+  const [viewerOpen, setViewerOpen] = useState(false)
+
   if (currentDiagram.status === 'failed') {
     return (
       <pre className="mermaid-fallback">
@@ -591,20 +597,167 @@ function MermaidDiagram({ chart }: { chart: string }) {
     )
   }
 
+  const isRendered = currentDiagram.status === 'rendered'
+  const className = isRendered
+    ? 'mermaid-diagram mermaid-diagram--clickable'
+    : 'mermaid-diagram mermaid-diagram--loading'
+
+  return (
+    <>
+      <button
+        type="button"
+        className={className}
+        aria-label={isRendered ? '点击放大查看 Mermaid 图' : 'Mermaid 图加载中'}
+        aria-busy={isRendered ? undefined : true}
+        disabled={!isRendered}
+        onClick={isRendered ? () => setViewerOpen(true) : undefined}
+        dangerouslySetInnerHTML={isRendered ? { __html: currentDiagram.svg } : undefined}
+      />
+      {viewerOpen && isRendered ? (
+        <MermaidViewer svg={currentDiagram.svg} onClose={() => setViewerOpen(false)} />
+      ) : null}
+    </>
+  )
+}
+
+const ZOOM_MIN = 0.25
+const ZOOM_MAX = 8
+const ZOOM_STEP = 1.2
+
+function clampScale(value: number) {
+  return Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, value))
+}
+
+function MermaidViewer({ svg, onClose }: { svg: string; onClose: () => void }) {
+  const [scale, setScale] = useState(1)
+  const [pan, setPan] = useState({ x: 0, y: 0 })
+  const [dragging, setDragging] = useState(false)
+  const dragStateRef = useRef<{ pointerX: number; pointerY: number; panX: number; panY: number } | null>(
+    null,
+  )
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    closeButtonRef.current?.focus()
+
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        onClose()
+      } else if (event.key === '+' || event.key === '=') {
+        event.preventDefault()
+        setScale((current) => clampScale(current * ZOOM_STEP))
+      } else if (event.key === '-' || event.key === '_') {
+        event.preventDefault()
+        setScale((current) => clampScale(current / ZOOM_STEP))
+      } else if (event.key === '0') {
+        event.preventDefault()
+        setScale(1)
+        setPan({ x: 0, y: 0 })
+      }
+    }
+
+    window.addEventListener('keydown', handleKey)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', handleKey)
+    }
+  }, [onClose])
+
+  const handleZoomIn = () => setScale((current) => clampScale(current * ZOOM_STEP))
+  const handleZoomOut = () => setScale((current) => clampScale(current / ZOOM_STEP))
+  const handleReset = () => {
+    setScale(1)
+    setPan({ x: 0, y: 0 })
+  }
+
+  const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    const factor = event.deltaY < 0 ? ZOOM_STEP : 1 / ZOOM_STEP
+    setScale((current) => clampScale(current * factor))
+  }
+
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.button !== 0) {
+      return
+    }
+    dragStateRef.current = {
+      pointerX: event.clientX,
+      pointerY: event.clientY,
+      panX: pan.x,
+      panY: pan.y,
+    }
+    setDragging(true)
+    event.currentTarget.setPointerCapture(event.pointerId)
+  }
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const start = dragStateRef.current
+    if (!start) return
+    setPan({
+      x: start.panX + (event.clientX - start.pointerX),
+      y: start.panY + (event.clientY - start.pointerY),
+    })
+  }
+
+  const handlePointerEnd = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragStateRef.current) return
+    dragStateRef.current = null
+    setDragging(false)
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+  }
+
   return (
     <div
-      className={
-        currentDiagram.status === 'rendered'
-          ? 'mermaid-diagram'
-          : 'mermaid-diagram mermaid-diagram--loading'
-      }
-      role="img"
-      aria-label="Mermaid diagram"
-      aria-busy={currentDiagram.status === 'rendered' ? undefined : true}
-      dangerouslySetInnerHTML={
-        currentDiagram.status === 'rendered' ? { __html: currentDiagram.svg } : undefined
-      }
-    />
+      className="mermaid-viewer"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Mermaid 图查看器"
+    >
+      <div className="mermaid-viewer-backdrop" onClick={onClose} aria-hidden="true" />
+      <div className="mermaid-viewer-toolbar">
+        <span className="mermaid-viewer-scale" aria-live="polite">
+          {Math.round(scale * 100)}%
+        </span>
+        <button type="button" onClick={handleZoomOut} aria-label="缩小" title="缩小 (-)">
+          <Minus size={16} strokeWidth={2.5} />
+        </button>
+        <button type="button" onClick={handleZoomIn} aria-label="放大" title="放大 (+)">
+          <Plus size={16} strokeWidth={2.5} />
+        </button>
+        <button type="button" onClick={handleReset} aria-label="重置" title="重置 (0)">
+          <RotateCcw size={16} strokeWidth={2.5} />
+        </button>
+        <button
+          ref={closeButtonRef}
+          type="button"
+          onClick={onClose}
+          aria-label="关闭"
+          title="关闭 (Esc)"
+        >
+          <X size={16} strokeWidth={2.5} />
+        </button>
+      </div>
+      <div
+        className={dragging ? 'mermaid-viewer-stage is-dragging' : 'mermaid-viewer-stage'}
+        onWheel={handleWheel}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerEnd}
+        onPointerCancel={handlePointerEnd}
+        onDoubleClick={handleReset}
+      >
+        <div
+          className="mermaid-viewer-content"
+          style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})` }}
+          dangerouslySetInnerHTML={{ __html: svg }}
+        />
+      </div>
+    </div>
   )
 }
 
