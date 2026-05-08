@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "snapshot": "tsx scripts/fetch-posts-snapshot.ts",
+    "prebuild": "npm run snapshot",
     "build": "tsc -b && vite build",
     "postbuild": "node scripts/write-spa-fallback.mjs",
     "lint": "eslint .",

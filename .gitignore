@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Generated build-time snapshot of GitHub issues
+public/posts.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

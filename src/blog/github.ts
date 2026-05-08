@@ -84,9 +84,7 @@ function parseGitHubIssue(value: unknown): GitHubIssue {
   return value
 }
 
-export async function fetchPublishedPosts({
-  fetcher = fetch,
-}: GitHubFetchOptions = {}): Promise<BlogPost[]> {
+async function loadPostsFromApi(fetcher: Fetcher): Promise<BlogPost[]> {
   const issues: GitHubIssue[] = []
 
   for (let page = 1; ; page += 1) {
@@ -114,12 +112,88 @@ export async function fetchPublishedPosts({
   return normalizeIssues(issueOnlyItems, BLOG_PUBLISH_LABEL)
 }
 
+async function loadPostsFromSnapshot(fetcher: Fetcher): Promise<BlogPost[] | undefined> {
+  const url = `${import.meta.env.BASE_URL}posts.json`
+  let response: Response
+  try {
+    response = await fetcher(url, { headers: { Accept: 'application/json' } })
+  } catch {
+    return undefined
+  }
+
+  if (!response.ok) {
+    return undefined
+  }
+
+  let payload: unknown
+  try {
+    payload = await response.json()
+  } catch {
+    return undefined
+  }
+
+  if (!isRecord(payload) || !Array.isArray(payload.posts)) {
+    return undefined
+  }
+
+  return payload.posts as BlogPost[]
+}
+
+let snapshotPromise: Promise<BlogPost[] | undefined> | undefined
+let listPromise: Promise<BlogPost[]> | undefined
+
+function getSnapshot(): Promise<BlogPost[] | undefined> {
+  if (!snapshotPromise) {
+    snapshotPromise = loadPostsFromSnapshot(fetch).catch(() => undefined)
+  }
+  return snapshotPromise
+}
+
+export function clearPostsCache(): void {
+  snapshotPromise = undefined
+  listPromise = undefined
+}
+
+export async function fetchPublishedPosts({
+  fetcher,
+}: GitHubFetchOptions = {}): Promise<BlogPost[]> {
+  if (fetcher) {
+    return loadPostsFromApi(fetcher)
+  }
+
+  if (!listPromise) {
+    listPromise = (async () => {
+      const snapshot = await getSnapshot()
+      if (snapshot) {
+        return snapshot
+      }
+      return loadPostsFromApi(fetch)
+    })().catch((error: unknown) => {
+      listPromise = undefined
+      throw error
+    })
+  }
+
+  return listPromise
+}
+
 export async function fetchIssuePost(
   issueNumber: number,
-  { fetcher = fetch }: GitHubFetchOptions = {},
+  { fetcher }: GitHubFetchOptions = {},
 ): Promise<BlogPost | undefined> {
+  if (!fetcher) {
+    const snapshot = await getSnapshot()
+    if (snapshot) {
+      const hit = snapshot.find((post) => post.id === issueNumber)
+      if (hit) {
+        return hit
+      }
+    }
+  }
+
+  const effective = fetcher ?? fetch
   const issue = parseGitHubIssue(
-    await fetchJson(createGitHubUrl(`/issues/${issueNumber}`), fetcher),
+    await fetchJson(createGitHubUrl(`/issues/${issueNumber}`), effective),
   )
 
   if (issue.pull_request || !isPublishedIssue(issue, BLOG_PUBLISH_LABEL)) {

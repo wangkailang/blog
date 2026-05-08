@@ -33,6 +33,10 @@ jobs:
 
       - name: Build blog
         run: npm run build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BLOG_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          BLOG_REPOSITORY_NAME: ${{ github.event.repository.name }}
 
       - name: Configure Pages
         uses: actions/configure-pages@v6
