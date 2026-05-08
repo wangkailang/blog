@@ -63,7 +63,7 @@ function getInitialTheme(): Theme {
     return stored
   }
 
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  return 'light'
 }
 
 function useTheme() {
@@ -217,11 +217,12 @@ function HomePage() {
         <div className="hero-copy">
           <h1>{SITE_DISPLAY_NAME}</h1>
           <p>
-            一处安静的写作空间。文章来自 GitHub Issues，阅读体验保持轻盈、清晰、专注。
+            一块给想法落地的写作白板。文章从 GitHub Issues 实时同步，保留工程现场的边角、节奏和火花。
           </p>
           <div className="hero-stats" aria-label="博客统计">
-            <span>{posts.length} 篇文章</span>
-            <span>Label: {BLOG_PUBLISH_LABEL}</span>
+            <span>{posts.length} POSTS</span>
+            <span>GITHUB ISSUES</span>
+            <span>LABEL: {BLOG_PUBLISH_LABEL}</span>
           </div>
         </div>
         <FeaturedPost post={featuredPost} />
@@ -230,7 +231,7 @@ function HomePage() {
       <section className="section-heading" aria-labelledby="recent-posts">
         <div>
           <h2 id="recent-posts">最新文章</h2>
-          <p>按发布时间排序，最新 issue 会出现在最前面。</p>
+          <p>按发布时间排序，最新 issue 会撞进最前面。</p>
         </div>
       </section>
 

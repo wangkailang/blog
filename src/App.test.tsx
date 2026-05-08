@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import '@testing-library/jest-dom/vitest'
-import { render, screen } from '@testing-library/react'
+import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App'
 import type { GitHubIssue } from './blog/types'
@@ -41,6 +41,7 @@ describe('App', () => {
   })
 
   afterEach(() => {
+    cleanup()
     vi.restoreAllMocks()
   })
 
@@ -52,6 +53,26 @@ describe('App', () => {
     expect(
       (await screen.findAllByRole('heading', { name: 'Live GitHub API Post' }))[0],
     ).toBeVisible()
+  })
+
+  it('renders the GitHub Issues source as part of the homepage chrome', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => jsonResponse([liveIssue()])))
+
+    render(<App />)
+
+    expect(await screen.findByText('GITHUB ISSUES')).toBeVisible()
+  })
+
+  it('defaults to the Slock-inspired light theme even when the system prefers dark', async () => {
+    Object.defineProperty(window, 'matchMedia', {
+      configurable: true,
+      value: vi.fn(() => ({ matches: true })),
+    })
+    vi.stubGlobal('fetch', vi.fn(async () => jsonResponse([liveIssue()])))
+
+    render(<App />)
+
+    expect(await screen.findByLabelText('切换到深色主题')).toBeVisible()
   })
 
   it('renders a post loaded from the GitHub issue detail API', async () => {
