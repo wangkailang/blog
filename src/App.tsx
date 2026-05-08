@@ -1,9 +1,11 @@
 import {
+  isValidElement,
   useCallback,
   useEffect,
   useId,
   useRef,
   useState,
+  type ReactElement,
   type ReactNode,
 } from 'react'
 import {
@@ -77,20 +79,42 @@ const markdownComponents: Components = {
     void node
     return <img {...props} loading="lazy" />
   },
-  code({ node, className, children, ...props }) {
+  pre({ node, children, ...props }) {
     void node
-    const language = className?.match(/language-(?<language>[\w-]+)/)?.groups?.language
-
-    if (language === 'mermaid') {
-      return <MermaidDiagram chart={String(children).replace(/\n$/, '')} />
+    const mermaidChart = extractMermaidChart(children)
+    if (mermaidChart !== undefined) {
+      return <MermaidDiagram chart={mermaidChart} />
     }
 
+    return <pre {...props}>{children}</pre>
+  },
+  code({ node, className, children, ...props }) {
+    void node
     return (
       <code {...props} className={className}>
         {children}
       </code>
     )
   },
+}
+
+function extractMermaidChart(children: ReactNode): string | undefined {
+  const child = Array.isArray(children) ? children.find(isValidElement) : children
+  if (!isValidElement(child)) {
+    return undefined
+  }
+
+  const codeChild = child as ReactElement<{ className?: string; children?: ReactNode }>
+  const language = codeChild.props.className
+    ?.match(/language-(?<language>[\w-]+)/)
+    ?.groups?.language
+  if (language !== 'mermaid') {
+    return undefined
+  }
+
+  const codeChildren = codeChild.props.children
+  const text = Array.isArray(codeChildren) ? codeChildren.join('') : String(codeChildren ?? '')
+  return text.replace(/\n$/, '')
 }
 
 function getInitialTheme(): Theme {
