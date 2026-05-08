@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useId, useMemo, useState, type ReactNode } from 'react'
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -9,7 +9,15 @@ import {
   Tag,
 } from 'lucide-react'
 import ReactMarkdown, { type Components } from 'react-markdown'
-import { BrowserRouter, Link, NavLink, Route, Routes, useParams } from 'react-router'
+import {
+  BrowserRouter,
+  Link,
+  NavLink,
+  Route,
+  Routes,
+  useLocation,
+  useParams,
+} from 'react-router'
 import remarkGfm from 'remark-gfm'
 import { stripLeadingCoverImage } from './blog/normalize'
 import {
@@ -21,6 +29,10 @@ import {
 import type { BlogPost } from './blog/types'
 
 type Theme = 'light' | 'dark'
+type MermaidDiagramState =
+  | { chart: string; status: 'loading' }
+  | { chart: string; status: 'rendered'; svg: string }
+  | { chart: string; status: 'failed' }
 
 const SITE_DISPLAY_NAME = 'Kilian'
 const SITE_GITHUB_PROFILE = {
@@ -54,6 +66,20 @@ const markdownComponents: Components = {
   img({ node, ...props }) {
     void node
     return <img {...props} loading="lazy" />
+  },
+  code({ node, className, children, ...props }) {
+    void node
+    const language = className?.match(/language-(?<language>[\w-]+)/)?.groups?.language
+
+    if (language === 'mermaid') {
+      return <MermaidDiagram chart={String(children).replace(/\n$/, '')} />
+    }
+
+    return (
+      <code {...props} className={className}>
+        {children}
+      </code>
+    )
   },
 }
 
@@ -116,6 +142,7 @@ function App() {
 
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <ScrollToTop />
       <SiteShell theme={theme} onToggleTheme={toggleTheme}>
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -125,6 +152,16 @@ function App() {
       </SiteShell>
     </BrowserRouter>
   )
+}
+
+function ScrollToTop() {
+  const { pathname } = useLocation()
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0 })
+  }, [pathname])
+
+  return null
 }
 
 type SiteShellProps = {
@@ -248,10 +285,12 @@ function HomePage() {
 
 function FeaturedPost({ post }: { post: BlogPost }) {
   return (
-    <article className="featured-post">
-      <Link className="featured-media" to={`/posts/${post.slug}`}>
-        <CoverImage src={post.coverImage} eager />
-      </Link>
+    <article className={post.coverImage ? 'featured-post' : 'featured-post featured-post--text-only'}>
+      {post.coverImage ? (
+        <Link className="featured-media" to={`/posts/${post.slug}`}>
+          <CoverImage src={post.coverImage} eager />
+        </Link>
+      ) : null}
       <div className="featured-content">
         <PostMeta post={post} compact />
         <h2>
@@ -268,7 +307,7 @@ function FeaturedPost({ post }: { post: BlogPost }) {
 
 function PostRow({ post }: { post: BlogPost }) {
   return (
-    <article className="post-row">
+    <article className={post.coverImage ? 'post-row' : 'post-row post-row--text-only'}>
       <div className="post-row-main">
         <PostMeta post={post} compact />
         <h3>
@@ -281,12 +320,14 @@ function PostRow({ post }: { post: BlogPost }) {
             .slice(0, 3)
             .map((label) => (
               <span key={label}>{label}</span>
-            ))}
+          ))}
         </div>
       </div>
-      <Link className="post-row-media" to={`/posts/${post.slug}`} aria-label={post.title}>
-        <CoverImage src={post.coverImage} />
-      </Link>
+      {post.coverImage ? (
+        <Link className="post-row-media" to={`/posts/${post.slug}`} aria-label={post.title}>
+          <CoverImage src={post.coverImage} />
+        </Link>
+      ) : null}
     </article>
   )
 }
@@ -354,9 +395,11 @@ function PostPage() {
         <Author post={post} />
       </header>
 
-      <figure className="article-cover">
-        <CoverImage src={post.coverImage} eager />
-      </figure>
+      {post.coverImage ? (
+        <figure className="article-cover">
+          <CoverImage src={post.coverImage} eager />
+        </figure>
+      ) : null}
 
       <div className="article-grid">
         <div className="markdown-body">
@@ -383,6 +426,72 @@ function PostPage() {
         </aside>
       </div>
     </article>
+  )
+}
+
+function MermaidDiagram({ chart }: { chart: string }) {
+  const reactId = useId()
+  const diagramId = `mermaid-${reactId.replace(/[^a-zA-Z0-9_-]/g, '')}`
+  const [diagram, setDiagram] = useState<MermaidDiagramState>({ chart, status: 'loading' })
+
+  useEffect(() => {
+    let cancelled = false
+
+    import('mermaid')
+      .then(({ default: mermaid }) => {
+        mermaid.initialize({
+          securityLevel: 'strict',
+          startOnLoad: false,
+          theme: 'base',
+        })
+
+        return mermaid.render(diagramId, chart)
+      })
+      .then((result) => {
+        document.getElementById(`d${diagramId}`)?.remove()
+
+        if (!cancelled) {
+          setDiagram({ chart, status: 'rendered', svg: result.svg })
+        }
+      })
+      .catch(() => {
+        document.getElementById(`d${diagramId}`)?.remove()
+
+        if (!cancelled) {
+          setDiagram({ chart, status: 'failed' })
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [chart, diagramId])
+
+  const currentDiagram: MermaidDiagramState =
+    diagram.chart === chart ? diagram : { chart, status: 'loading' }
+
+  if (currentDiagram.status === 'failed') {
+    return (
+      <pre className="mermaid-fallback">
+        <code className="language-mermaid">{chart}</code>
+      </pre>
+    )
+  }
+
+  return (
+    <div
+      className={
+        currentDiagram.status === 'rendered'
+          ? 'mermaid-diagram'
+          : 'mermaid-diagram mermaid-diagram--loading'
+      }
+      role="img"
+      aria-label="Mermaid diagram"
+      aria-busy={currentDiagram.status === 'rendered' ? undefined : true}
+      dangerouslySetInnerHTML={
+        currentDiagram.status === 'rendered' ? { __html: currentDiagram.svg } : undefined
+      }
+    />
   )
 }
 

@@ -375,6 +375,11 @@ main {
   align-self: stretch;
 }
 
+.featured-post--text-only {
+  display: grid;
+  align-content: end;
+}
+
 .featured-media {
   display: block;
   aspect-ratio: 16 / 10;
@@ -497,6 +502,10 @@ main {
     transform 120ms ease,
     box-shadow 120ms ease,
     background 120ms ease;
+}
+
+.post-row--text-only {
+  grid-template-columns: 1fr;
 }
 
 .post-row:nth-child(3n + 1) {
@@ -731,6 +740,37 @@ main {
   border: 0;
   background: transparent;
   padding: 0;
+}
+
+.mermaid-diagram {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 220px;
+  margin: 1.4em 0;
+  overflow-x: auto;
+  border: 2px solid var(--border);
+  background: var(--surface-elevated);
+  box-shadow: var(--shadow-small);
+  padding: 18px;
+}
+
+.mermaid-diagram svg {
+  width: max-content;
+  max-width: 100%;
+  height: auto;
+}
+
+.mermaid-diagram--loading {
+  background:
+    linear-gradient(90deg, transparent, rgba(255, 212, 64, 0.32), transparent),
+    var(--surface-elevated);
+  background-size: 220px 100%, auto;
+  background-repeat: no-repeat;
+}
+
+.mermaid-fallback {
+  border-color: var(--pink);
 }
 
 .markdown-body blockquote {

@@ -6,6 +6,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App'
 import type { GitHubIssue } from './blog/types'
 
+vi.mock('mermaid', () => ({
+  default: {
+    initialize: vi.fn(),
+    render: vi.fn(async (id: string) => ({
+      svg: `<svg id="${id}" viewBox="0 0 120 40"><text>Mock diagram</text></svg>`,
+    })),
+  },
+}))
+
 const liveIssue = (overrides: Partial<GitHubIssue> = {}): GitHubIssue => ({
   number: 9,
   title: 'Live GitHub API Post',
@@ -37,6 +46,10 @@ describe('App', () => {
     Object.defineProperty(window, 'matchMedia', {
       configurable: true,
       value: vi.fn(() => ({ matches: false })),
+    })
+    Object.defineProperty(window, 'scrollTo', {
+      configurable: true,
+      value: vi.fn(),
     })
   })
 
@@ -90,5 +103,39 @@ describe('App', () => {
       'https://api.github.com/repos/wangkailang/blog/issues/9',
       expect.any(Object),
     )
+  })
+
+  it('renders Mermaid code fences as diagram regions in post content', async () => {
+    window.history.pushState({}, '', '/posts/9-live-github-api-post')
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () =>
+        jsonResponse(
+          liveIssue({
+            body: [
+              '```mermaid',
+              'graph TD',
+              '  idea[Idea] --> shipped[Shipped]',
+              '```',
+            ].join('\n'),
+          }),
+        ),
+      ),
+    )
+
+    render(<App />)
+
+    expect(await screen.findByRole('img', { name: 'Mermaid diagram' })).toBeInTheDocument()
+    expect(screen.queryByText('graph TD')).not.toBeInTheDocument()
+  })
+
+  it('omits the article cover when a post has no image', async () => {
+    window.history.pushState({}, '', '/posts/9-live-github-api-post')
+    vi.stubGlobal('fetch', vi.fn(async () => jsonResponse(liveIssue({ body: 'No image here.' }))))
+
+    const { container } = render(<App />)
+
+    expect(await screen.findAllByText('No image here.')).toHaveLength(2)
+    expect(container.querySelector('.article-cover')).not.toBeInTheDocument()
   })
 })
