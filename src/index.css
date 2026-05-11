@@ -678,6 +678,7 @@ main {
 }
 
 .mermaid-diagram--clickable {
+  position: relative;
   cursor: zoom-in;
   transition:
     transform 120ms ease,
@@ -689,15 +690,72 @@ main {
 .mermaid-diagram--clickable:focus-visible {
   transform: translate(-1px, -1px);
   box-shadow: 5px 5px 0 var(--border);
-  background: var(--accent);
+}
+
+.mermaid-diagram--clickable::after {
+  content: '↗ 点击放大';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+  padding: 5px 9px;
+  border: 2px solid var(--border);
+  background: var(--border);
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  box-shadow: 2px 2px 0 var(--accent);
+  opacity: 0;
+  transform: translate(3px, -3px);
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+  pointer-events: none;
+}
+
+.mermaid-diagram--clickable:hover::after,
+.mermaid-diagram--clickable:focus-visible::after {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+@media (hover: none) {
+  .mermaid-diagram--clickable::after {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
 }
 
 .mermaid-diagram--loading {
-  background:
-    linear-gradient(90deg, transparent, rgba(255, 212, 64, 0.32), transparent),
-    var(--surface-elevated);
-  background-size: 220px 100%, auto;
-  background-repeat: no-repeat;
+  display: grid;
+  grid-auto-flow: row;
+  align-content: center;
+  justify-items: center;
+  gap: 14px;
+  background: var(--surface-elevated);
+}
+
+.mermaid-loading-spinner {
+  color: var(--text);
+  animation: mermaid-spin 0.9s linear infinite;
+  transform-origin: center;
+}
+
+.mermaid-loading-text {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+@keyframes mermaid-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .mermaid-fallback {

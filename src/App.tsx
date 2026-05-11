@@ -13,6 +13,7 @@ import {
   ArrowUpRight,
   Calendar,
   Clock3,
+  Loader2,
   Minus,
   Moon,
   Plus,
@@ -546,20 +547,84 @@ function TableOfContents({ items }: { items: TocItem[] }) {
   )
 }
 
+type MermaidModule = typeof import('mermaid')['default']
+
+let mermaidPromise: Promise<MermaidModule> | null = null
+
+function getMermaid(): Promise<MermaidModule> {
+  if (!mermaidPromise) {
+    mermaidPromise = import('mermaid').then(({ default: mermaid }) => mermaid)
+  }
+  return mermaidPromise
+}
+
+const MERMAID_THEME_VARS_LIGHT = {
+  fontFamily: '"Space Grotesk", system-ui, sans-serif',
+  fontSize: '14px',
+  background: '#ffffff',
+  primaryColor: '#fff5d1',
+  primaryTextColor: '#141111',
+  primaryBorderColor: '#141111',
+  secondaryColor: '#ffffff',
+  tertiaryColor: '#fffaef',
+  mainBkg: '#ffffff',
+  nodeBorder: '#141111',
+  lineColor: '#141111',
+  textColor: '#141111',
+  edgeLabelBackground: '#fff5d1',
+} as const
+
+const MERMAID_THEME_VARS_DARK = {
+  fontFamily: '"Space Grotesk", system-ui, sans-serif',
+  fontSize: '14px',
+  background: '#221f1f',
+  primaryColor: '#302a1b',
+  primaryTextColor: '#fffaef',
+  primaryBorderColor: '#fffaef',
+  secondaryColor: '#221f1f',
+  tertiaryColor: '#141111',
+  mainBkg: '#221f1f',
+  nodeBorder: '#fffaef',
+  lineColor: '#fffaef',
+  textColor: '#fffaef',
+  edgeLabelBackground: '#302a1b',
+} as const
+
+function useDocumentTheme(): Theme {
+  const [docTheme, setDocTheme] = useState<Theme>(() => {
+    if (typeof document === 'undefined') return 'light'
+    return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
+  })
+
+  useEffect(() => {
+    const root = document.documentElement
+    const observer = new MutationObserver(() => {
+      setDocTheme(root.dataset.theme === 'dark' ? 'dark' : 'light')
+    })
+    observer.observe(root, { attributes: true, attributeFilter: ['data-theme'] })
+    return () => observer.disconnect()
+  }, [])
+
+  return docTheme
+}
+
 function MermaidDiagram({ chart }: { chart: string }) {
   const reactId = useId()
   const diagramId = `mermaid-${reactId.replace(/[^a-zA-Z0-9_-]/g, '')}`
   const [diagram, setDiagram] = useState<MermaidDiagramState>({ chart, status: 'loading' })
+  const theme = useDocumentTheme()
 
   useEffect(() => {
     let cancelled = false
 
-    import('mermaid')
-      .then(({ default: mermaid }) => {
+    getMermaid()
+      .then((mermaid) => {
         mermaid.initialize({
           securityLevel: 'strict',
           startOnLoad: false,
           theme: 'base',
+          themeVariables:
+            theme === 'dark' ? MERMAID_THEME_VARS_DARK : MERMAID_THEME_VARS_LIGHT,
         })
 
         return mermaid.render(diagramId, chart)
@@ -582,7 +647,7 @@ function MermaidDiagram({ chart }: { chart: string }) {
     return () => {
       cancelled = true
     }
-  }, [chart, diagramId])
+  }, [chart, diagramId, theme])
 
   const currentDiagram: MermaidDiagramState =
     diagram.chart === chart ? diagram : { chart, status: 'loading' }
@@ -597,23 +662,30 @@ function MermaidDiagram({ chart }: { chart: string }) {
     )
   }
 
-  const isRendered = currentDiagram.status === 'rendered'
-  const className = isRendered
-    ? 'mermaid-diagram mermaid-diagram--clickable'
-    : 'mermaid-diagram mermaid-diagram--loading'
+  if (currentDiagram.status === 'loading') {
+    return (
+      <div
+        className="mermaid-diagram mermaid-diagram--loading"
+        role="status"
+        aria-busy="true"
+        aria-label="Mermaid 图加载中"
+      >
+        <Loader2 className="mermaid-loading-spinner" size={28} strokeWidth={2.5} aria-hidden="true" />
+        <span className="mermaid-loading-text">RENDERING DIAGRAM</span>
+      </div>
+    )
+  }
 
   return (
     <>
       <button
         type="button"
-        className={className}
-        aria-label={isRendered ? '点击放大查看 Mermaid 图' : 'Mermaid 图加载中'}
-        aria-busy={isRendered ? undefined : true}
-        disabled={!isRendered}
-        onClick={isRendered ? () => setViewerOpen(true) : undefined}
-        dangerouslySetInnerHTML={isRendered ? { __html: currentDiagram.svg } : undefined}
+        className="mermaid-diagram mermaid-diagram--clickable"
+        aria-label="点击放大查看 Mermaid 图"
+        onClick={() => setViewerOpen(true)}
+        dangerouslySetInnerHTML={{ __html: currentDiagram.svg }}
       />
-      {viewerOpen && isRendered ? (
+      {viewerOpen ? (
         <MermaidViewer svg={currentDiagram.svg} onClose={() => setViewerOpen(false)} />
       ) : null}
     </>
@@ -635,6 +707,10 @@ function MermaidViewer({ svg, onClose }: { svg: string; onClose: () => void }) {
   const dragStateRef = useRef<{ pointerX: number; pointerY: number; panX: number; panY: number } | null>(
     null,
   )
+  const pointersRef = useRef<Map<number, { x: number; y: number }>>(new Map())
+  const pinchStateRef = useRef<{ initialDistance: number; initialScale: number } | null>(null)
+  const stageRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
@@ -666,6 +742,32 @@ function MermaidViewer({ svg, onClose }: { svg: string; onClose: () => void }) {
     }
   }, [onClose])
 
+  useEffect(() => {
+    const stage = stageRef.current
+    const content = contentRef.current
+    if (!stage || !content) return
+
+    const raf = requestAnimationFrame(() => {
+      const svgEl = content.querySelector('svg')
+      if (!svgEl) return
+
+      const stageBox = stage.getBoundingClientRect()
+      const svgBox = svgEl.getBoundingClientRect()
+      if (svgBox.width === 0 || svgBox.height === 0) return
+
+      const padding = 96
+      const fitX = (stageBox.width - padding) / svgBox.width
+      const fitY = (stageBox.height - padding) / svgBox.height
+      const fit = Math.min(1, fitX, fitY)
+
+      if (fit < 1 && fit >= ZOOM_MIN) {
+        setScale(fit)
+      }
+    })
+
+    return () => cancelAnimationFrame(raf)
+  }, [svg])
+
   const handleZoomIn = () => setScale((current) => clampScale(current * ZOOM_STEP))
   const handleZoomOut = () => setScale((current) => clampScale(current / ZOOM_STEP))
   const handleReset = () => {
@@ -680,32 +782,74 @@ function MermaidViewer({ svg, onClose }: { svg: string; onClose: () => void }) {
   }
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (event.button !== 0) {
+    if (event.pointerType === 'mouse' && event.button !== 0) {
       return
     }
-    dragStateRef.current = {
-      pointerX: event.clientX,
-      pointerY: event.clientY,
-      panX: pan.x,
-      panY: pan.y,
-    }
-    setDragging(true)
+
+    pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY })
     event.currentTarget.setPointerCapture(event.pointerId)
+
+    if (pointersRef.current.size === 2) {
+      const [a, b] = Array.from(pointersRef.current.values())
+      pinchStateRef.current = {
+        initialDistance: Math.hypot(a.x - b.x, a.y - b.y),
+        initialScale: scale,
+      }
+      dragStateRef.current = null
+      setDragging(false)
+    } else if (pointersRef.current.size === 1) {
+      dragStateRef.current = {
+        pointerX: event.clientX,
+        pointerY: event.clientY,
+        panX: pan.x,
+        panY: pan.y,
+      }
+      setDragging(true)
+    }
   }
 
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-    const start = dragStateRef.current
-    if (!start) return
+    if (!pointersRef.current.has(event.pointerId)) return
+
+    pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY })
+
+    if (pointersRef.current.size === 2 && pinchStateRef.current) {
+      const [a, b] = Array.from(pointersRef.current.values())
+      const distance = Math.hypot(a.x - b.x, a.y - b.y)
+      const ratio = distance / pinchStateRef.current.initialDistance
+      setScale(clampScale(pinchStateRef.current.initialScale * ratio))
+      return
+    }
+
+    const drag = dragStateRef.current
+    if (!drag) return
     setPan({
-      x: start.panX + (event.clientX - start.pointerX),
-      y: start.panY + (event.clientY - start.pointerY),
+      x: drag.panX + (event.clientX - drag.pointerX),
+      y: drag.panY + (event.clientY - drag.pointerY),
     })
   }
 
   const handlePointerEnd = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!dragStateRef.current) return
-    dragStateRef.current = null
-    setDragging(false)
+    pointersRef.current.delete(event.pointerId)
+
+    if (pointersRef.current.size < 2) {
+      pinchStateRef.current = null
+    }
+
+    if (pointersRef.current.size === 0) {
+      dragStateRef.current = null
+      setDragging(false)
+    } else if (pointersRef.current.size === 1 && !dragStateRef.current) {
+      const [remaining] = Array.from(pointersRef.current.values())
+      dragStateRef.current = {
+        pointerX: remaining.x,
+        pointerY: remaining.y,
+        panX: pan.x,
+        panY: pan.y,
+      }
+      setDragging(true)
+    }
+
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId)
     }
@@ -743,6 +887,7 @@ function MermaidViewer({ svg, onClose }: { svg: string; onClose: () => void }) {
         </button>
       </div>
       <div
+        ref={stageRef}
         className={dragging ? 'mermaid-viewer-stage is-dragging' : 'mermaid-viewer-stage'}
         onWheel={handleWheel}
         onPointerDown={handlePointerDown}
@@ -752,6 +897,7 @@ function MermaidViewer({ svg, onClose }: { svg: string; onClose: () => void }) {
         onDoubleClick={handleReset}
       >
         <div
+          ref={contentRef}
           className="mermaid-viewer-content"
           style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})` }}
           dangerouslySetInnerHTML={{ __html: svg }}
