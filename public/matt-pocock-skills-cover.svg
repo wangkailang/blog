@@ -1,0 +1,184 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Skills For Real Engineers cover</title>
+  <desc id="desc">An editorial cover about composing small AI agent skills for real engineering work.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f5f7fb"/>
+      <stop offset="0.5" stop-color="#eef1f7"/>
+      <stop offset="1" stop-color="#efeaf0"/>
+    </linearGradient>
+    <linearGradient id="frame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#edf0f6"/>
+    </linearGradient>
+    <linearGradient id="dark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#1f2937"/>
+    </linearGradient>
+    <linearGradient id="warm" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fef3c7"/>
+      <stop offset="1" stop-color="#fde68a"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="20" stdDeviation="22" flood-color="#152033" flood-opacity="0.14"/>
+    </filter>
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#152033" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+
+  <g opacity="0.32" stroke="#b3bcc8" stroke-width="1">
+    <path d="M0 200 H1600"/>
+    <path d="M0 320 H1600"/>
+    <path d="M0 440 H1600"/>
+    <path d="M0 560 H1600"/>
+    <path d="M0 680 H1600"/>
+  </g>
+
+  <g>
+    <rect x="120" y="84" width="240" height="44" rx="22" fill="#111827"/>
+    <text x="240" y="112" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#ffffff" letter-spacing="1">AGENT SKILLS · 拆解</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="120" y="174" width="276" height="156" rx="12" fill="url(#frame)" stroke="#cfd6df"/>
+    <text x="138" y="200" font-family="Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#9aa3b1" letter-spacing="2">/GRILL-WITH-DOCS</text>
+    <text x="138" y="232" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="800" fill="#111827">先把"想清楚"做对</text>
+    <g fill="#475569" font-family="Arial, Helvetica, sans-serif" font-size="12">
+      <text x="138" y="262">· 顺着决策树拷问</text>
+      <text x="138" y="282">· 维护 CONTEXT.md</text>
+      <text x="138" y="302">· 沉淀 ADR（仅三条全中）</text>
+    </g>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="418" y="174" width="276" height="156" rx="12" fill="url(#frame)" stroke="#cfd6df"/>
+    <text x="436" y="200" font-family="Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#9aa3b1" letter-spacing="2">/TO-ISSUES</text>
+    <text x="436" y="232" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="800" fill="#111827">Vertical Slice</text>
+    <g>
+      <rect x="436" y="252" width="56" height="14" rx="3" fill="#cbd5e1"/>
+      <rect x="498" y="252" width="56" height="14" rx="3" fill="#cbd5e1"/>
+      <rect x="560" y="252" width="56" height="14" rx="3" fill="#cbd5e1"/>
+      <rect x="622" y="252" width="56" height="14" rx="3" fill="#cbd5e1"/>
+      <text x="690" y="263" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#94a3b8">✗</text>
+      <rect x="436" y="282" width="118" height="14" rx="3" fill="#1f2937"/>
+      <rect x="436" y="304" width="118" height="14" rx="3" fill="#1f2937"/>
+      <text x="572" y="293" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="700" fill="#15803d">✓ AFK</text>
+      <text x="572" y="315" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="700" fill="#15803d">✓ AFK</text>
+    </g>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="716" y="174" width="276" height="156" rx="12" fill="url(#frame)" stroke="#cfd6df"/>
+    <text x="734" y="200" font-family="Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#9aa3b1" letter-spacing="2">/TDD</text>
+    <text x="734" y="232" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="800" fill="#111827">Red → Green → Refactor</text>
+    <g>
+      <circle cx="746" cy="270" r="8" fill="#dc2626"/>
+      <text x="762" y="275" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#111827">写一个失败测试</text>
+      <circle cx="746" cy="294" r="8" fill="#16a34a"/>
+      <text x="762" y="299" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#111827">最小实现让它过</text>
+      <circle cx="746" cy="318" r="8" fill="#2563eb"/>
+      <text x="762" y="323" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#111827">重构 · 别在红灯时改</text>
+    </g>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="120" y="354" width="276" height="156" rx="12" fill="url(#frame)" stroke="#cfd6df"/>
+    <text x="138" y="380" font-family="Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#9aa3b1" letter-spacing="2">/DIAGNOSE</text>
+    <text x="138" y="408" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#111827">先建反馈回路</text>
+    <g>
+      <rect x="138" y="424" width="32" height="20" rx="4" fill="#eef2ff" stroke="#c7d2fe"/>
+      <text x="154" y="438" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" fill="#3730a3">1</text>
+      <rect x="178" y="424" width="32" height="20" rx="4" fill="#eef2ff" stroke="#c7d2fe"/>
+      <text x="194" y="438" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" fill="#3730a3">2</text>
+      <rect x="218" y="424" width="32" height="20" rx="4" fill="#eef2ff" stroke="#c7d2fe"/>
+      <text x="234" y="438" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" fill="#3730a3">3</text>
+      <rect x="258" y="424" width="32" height="20" rx="4" fill="#eef2ff" stroke="#c7d2fe"/>
+      <text x="274" y="438" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" fill="#3730a3">4</text>
+      <rect x="298" y="424" width="32" height="20" rx="4" fill="#eef2ff" stroke="#c7d2fe"/>
+      <text x="314" y="438" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" fill="#3730a3">5</text>
+      <rect x="338" y="424" width="32" height="20" rx="4" fill="#eef2ff" stroke="#c7d2fe"/>
+      <text x="354" y="438" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" fill="#3730a3">6</text>
+    </g>
+    <text x="138" y="478" font-family="Georgia, 'Times New Roman', serif" font-size="13" font-style="italic" fill="#4b5563">"Build the loop. Bug is 90% fixed."</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="418" y="354" width="276" height="156" rx="12" fill="url(#frame)" stroke="#cfd6df"/>
+    <text x="436" y="380" font-family="Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#9aa3b1" letter-spacing="2">/IMPROVE-ARCHITECTURE</text>
+    <text x="436" y="408" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#111827">Deep Modules</text>
+    <g>
+      <rect x="436" y="424" width="240" height="14" rx="3" fill="#1f2937"/>
+      <text x="436" y="458" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#64748b">small interface</text>
+      <g fill="#cbd5e1">
+        <rect x="436" y="468" width="42" height="22" rx="3"/>
+        <rect x="484" y="468" width="42" height="22" rx="3"/>
+        <rect x="532" y="468" width="42" height="22" rx="3"/>
+        <rect x="580" y="468" width="42" height="22" rx="3"/>
+        <rect x="628" y="468" width="48" height="22" rx="3"/>
+      </g>
+      <text x="436" y="504" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#64748b">deep implementation</text>
+    </g>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="716" y="354" width="276" height="156" rx="12" fill="url(#frame)" stroke="#cfd6df"/>
+    <text x="734" y="380" font-family="Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#9aa3b1" letter-spacing="2">/CAVEMAN · /HANDOFF</text>
+    <text x="734" y="408" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#111827">日常协作</text>
+    <text x="734" y="438" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#475569">省 75% token · 会话压缩交接</text>
+    <g>
+      <rect x="734" y="456" width="240" height="36" rx="6" fill="#0f172a"/>
+      <text x="746" y="479" font-family="Menlo, Consolas, monospace" font-size="11" fill="#a7f3d0">$ Bug in auth. Fix: use &lt; not &lt;=</text>
+    </g>
+  </g>
+
+  <g filter="url(#softShadow)">
+    <rect x="1016" y="174" width="450" height="336" rx="16" fill="url(#dark)" stroke="#344055"/>
+
+    <rect x="1044" y="206" width="120" height="22" rx="11" fill="#a7f3d0"/>
+    <text x="1104" y="222" text-anchor="middle" font-family="Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#022c22" letter-spacing="1">CONTEXT.md</text>
+
+    <text x="1044" y="262" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#cbd5e1">4 大失败模式 → 4 类 Skill</text>
+
+    <g font-family="Arial, Helvetica, sans-serif" font-size="13">
+      <rect x="1044" y="278" width="14" height="14" rx="3" fill="#fcd34d"/>
+      <text x="1066" y="290" fill="#e2e8f0">Misalignment</text>
+      <text x="1198" y="290" fill="#94a3b8">→</text>
+      <text x="1218" y="290" fill="#fcd34d" font-family="Menlo, Consolas, monospace">/grill-with-docs</text>
+
+      <rect x="1044" y="302" width="14" height="14" rx="3" fill="#fcd34d"/>
+      <text x="1066" y="314" fill="#e2e8f0">Verbosity</text>
+      <text x="1198" y="314" fill="#94a3b8">→</text>
+      <text x="1218" y="314" fill="#fcd34d" font-family="Menlo, Consolas, monospace">shared language</text>
+
+      <rect x="1044" y="326" width="14" height="14" rx="3" fill="#fcd34d"/>
+      <text x="1066" y="338" fill="#e2e8f0">Broken code</text>
+      <text x="1198" y="338" fill="#94a3b8">→</text>
+      <text x="1218" y="338" fill="#fcd34d" font-family="Menlo, Consolas, monospace">/tdd · /diagnose</text>
+
+      <rect x="1044" y="350" width="14" height="14" rx="3" fill="#fcd34d"/>
+      <text x="1066" y="362" fill="#e2e8f0">Ball of mud</text>
+      <text x="1198" y="362" fill="#94a3b8">→</text>
+      <text x="1218" y="362" fill="#fcd34d" font-family="Menlo, Consolas, monospace">/improve-arch</text>
+    </g>
+
+    <g stroke="#475569" stroke-width="1" stroke-dasharray="4 4">
+      <path d="M1044 386 H1438"/>
+    </g>
+
+    <text x="1044" y="412" font-family="Georgia, 'Times New Roman', serif" font-size="14" font-style="italic" fill="#e2e8f0">"Small, easy to adapt,</text>
+    <text x="1044" y="432" font-family="Georgia, 'Times New Roman', serif" font-size="14" font-style="italic" fill="#e2e8f0">and composable."</text>
+
+    <text x="1044" y="476" font-family="Menlo, Consolas, monospace" font-size="11" fill="#94a3b8" letter-spacing="1">$ npx skills@latest add</text>
+    <text x="1044" y="492" font-family="Menlo, Consolas, monospace" font-size="11" fill="#94a3b8" letter-spacing="1">  mattpocock/skills</text>
+  </g>
+
+  <text x="120" y="722" font-family="'Helvetica Neue', Arial, Helvetica, sans-serif" font-size="68" font-weight="900" fill="#111827" letter-spacing="-1">Skills For Real Engineers</text>
+  <text x="124" y="772" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="600" fill="#4b5563">把"工程师本能"塞进 AI Agent 的一套实战工具集</text>
+
+  <g fill="#9aa3b1" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="600" letter-spacing="2">
+    <text x="120" y="820">GRILL · TDD · DIAGNOSE · DEEPEN · NO VIBE CODING</text>
+  </g>
+</svg>
