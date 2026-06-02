@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans CJK SC',sans-serif">
+  <title id="title">大模型评测封面</title>
+  <desc id="desc">A kid-friendly educational-infographic style cover: which LLM benchmarks to ignore, what signals to watch, and how to build your own product evals.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f9f3e7"/>
+      <stop offset="1" stop-color="#efe4cd"/>
+    </linearGradient>
+    <linearGradient id="brownPill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8c7058"/>
+      <stop offset="1" stop-color="#6f5743"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="170%">
+      <feDropShadow dx="0" dy="7" stdDeviation="11" flood-color="#5a4636" flood-opacity="0.18"/>
+    </filter>
+    <filter id="softSm" x="-30%" y="-30%" width="160%" height="190%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#5a4636" flood-opacity="0.16"/>
+    </filter>
+  </defs>
+
+  <!-- background -->
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <circle cx="1500" cy="70" r="150" fill="#ffffff" opacity="0.22"/>
+  <circle cx="80" cy="470" r="120" fill="#ffffff" opacity="0.16"/>
+
+  <!-- ===== LEFT: title panel ===== -->
+  <text x="80" y="172" font-size="106" font-weight="800" fill="#54412f" letter-spacing="3">大模型评测</text>
+
+  <g filter="url(#softSm)">
+    <rect x="82" y="200" rx="32" ry="32" width="612" height="60" fill="url(#brownPill)"/>
+  </g>
+  <text x="388" y="240" text-anchor="middle" font-size="27" font-weight="700" fill="#fbf3e3">哪些榜别看 · 看什么信号 · 怎么测自己产品</text>
+
+  <text x="84" y="328" font-size="29" fill="#6f5d49" font-weight="500">排行榜正在批量失效——被刷穿、</text>
+  <text x="84" y="370" font-size="29" fill="#6f5d49" font-weight="500">被污染、还被刷榜。这篇聊：哪些</text>
+  <text x="84" y="412" font-size="29" fill="#6f5d49" font-weight="500">榜可以不看、该盯什么信号，以及</text>
+  <text x="84" y="454" font-size="29" fill="#6f5d49" font-weight="500">怎么给产品搭一套刷不动的私有评测。</text>
+
+  <!-- mascot: kid with magnifying glass over a tiny leaderboard -->
+  <g transform="translate(118,548)">
+    <ellipse cx="92" cy="206" rx="80" ry="14" fill="#5a4636" opacity="0.12"/>
+    <rect x="46" y="120" width="92" height="84" rx="30" fill="#d2594c"/>
+    <rect x="118" y="120" width="62" height="22" rx="11" fill="#d2594c" transform="rotate(-30 118 131)"/>
+    <circle cx="92" cy="66" r="56" fill="#f6c9a4"/>
+    <path d="M36 72 Q40 14 92 12 Q144 14 148 72 Q122 46 92 46 Q62 46 36 72 Z" fill="#5a4636"/>
+    <circle cx="74" cy="66" r="6" fill="#4a3a2e"/>
+    <circle cx="110" cy="66" r="6" fill="#4a3a2e"/>
+    <circle cx="62" cy="83" r="8" fill="#f0a081" opacity="0.6"/>
+    <circle cx="122" cy="83" r="8" fill="#f0a081" opacity="0.6"/>
+    <path d="M78 87 q14 14 28 0" fill="none" stroke="#4a3a2e" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="198" cy="92" r="34" fill="#bfe0ef" opacity="0.55" stroke="#5a4636" stroke-width="9"/>
+    <line x1="222" y1="116" x2="248" y2="142" stroke="#5a4636" stroke-width="13" stroke-linecap="round"/>
+    <rect x="186" y="92" width="7" height="12" rx="2" fill="#d2594c"/>
+    <rect x="196" y="86" width="7" height="18" rx="2" fill="#6f9442"/>
+    <rect x="206" y="79" width="7" height="25" rx="2" fill="#3f74a8"/>
+  </g>
+
+  <!-- "小知識" callout bubble -->
+  <g filter="url(#soft)">
+    <rect x="366" y="566" rx="26" ry="26" width="446" height="142" fill="#fff8e6"/>
+  </g>
+  <path d="M366 632 l-26 16 l26 16 z" fill="#fff8e6"/>
+  <rect x="390" y="548" rx="20" ry="20" width="118" height="40" fill="#eab23e"/>
+  <text x="449" y="575" text-anchor="middle" font-size="23" font-weight="700" fill="#6f4e12">小知識</text>
+  <text x="392" y="636" font-size="25" fill="#6f5d49" font-weight="500">公开榜会饱和、污染、被刷；</text>
+  <text x="392" y="676" font-size="25" fill="#6f5d49" font-weight="500">真正靠得住的，是自己的私有评测。</text>
+
+  <!-- ===== RIGHT: three numbered cards ===== -->
+  <!-- card 1 -->
+  <g filter="url(#soft)"><rect x="900" y="92" rx="28" ry="28" width="640" height="206" fill="#fcebe7"/></g>
+  <rect x="900" y="92" rx="28" ry="28" width="640" height="206" fill="none" stroke="#f1d2cb" stroke-width="2"/>
+  <circle cx="964" cy="152" r="32" fill="#d2594c"/>
+  <text x="964" y="164" text-anchor="middle" font-size="36" font-weight="800" fill="#ffffff">1</text>
+  <text x="1014" y="150" font-size="40" font-weight="800" fill="#c4493c">不看的榜</text>
+  <text x="1014" y="196" font-size="25" fill="#6f5d49">刷穿 / 污染 / 刷榜，单看没意义</text>
+  <text x="1014" y="240" font-size="22" fill="#a9897a">如 MMLU、Chatbot Arena、SWE-bench V</text>
+  <g transform="translate(1452,124)">
+    <rect x="0" y="40" width="18" height="40" rx="4" fill="#e7b8b0"/>
+    <rect x="26" y="22" width="18" height="58" rx="4" fill="#e7b8b0"/>
+    <rect x="52" y="4" width="18" height="76" rx="4" fill="#e7b8b0"/>
+    <path d="M-6 -2 L78 84 M78 -2 L-6 84" stroke="#c4493c" stroke-width="8" stroke-linecap="round"/>
+  </g>
+
+  <!-- card 2 -->
+  <g filter="url(#soft)"><rect x="900" y="330" rx="28" ry="28" width="640" height="206" fill="#eef4e3"/></g>
+  <rect x="900" y="330" rx="28" ry="28" width="640" height="206" fill="none" stroke="#d8e4c2" stroke-width="2"/>
+  <circle cx="964" cy="390" r="32" fill="#6f9442"/>
+  <text x="964" y="402" text-anchor="middle" font-size="36" font-weight="800" fill="#ffffff">2</text>
+  <text x="1014" y="388" font-size="40" font-weight="800" fill="#5d8235">看的信号</text>
+  <text x="1014" y="434" font-size="25" fill="#6f5d49">盯难度、可靠性与成本，别盯均分</text>
+  <text x="1014" y="478" font-size="22" fill="#8a9a72">如 pass^k、有效上下文、每题成本</text>
+  <g transform="translate(1446,372)">
+    <polyline points="0,40 16,40 28,12 44,66 58,40 80,40" fill="none" stroke="#5d8235" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- card 3 -->
+  <g filter="url(#soft)"><rect x="900" y="568" rx="28" ry="28" width="640" height="206" fill="#e7f0f8"/></g>
+  <rect x="900" y="568" rx="28" ry="28" width="640" height="206" fill="none" stroke="#cfe0ef" stroke-width="2"/>
+  <circle cx="964" cy="628" r="32" fill="#3f74a8"/>
+  <text x="964" y="640" text-anchor="middle" font-size="36" font-weight="800" fill="#ffffff">3</text>
+  <text x="1014" y="626" font-size="40" font-weight="800" fill="#356094">自己造评测</text>
+  <text x="1014" y="672" font-size="25" fill="#6f5d49">公开榜只配粗筛，质量靠私有集</text>
+  <text x="1014" y="716" font-size="22" fill="#7c93a8">golden set → CI 门禁 → 线上回灌</text>
+  <g transform="translate(1452,608)">
+    <rect x="0" y="2" width="72" height="84" rx="10" fill="#ffffff" stroke="#3f74a8" stroke-width="5"/>
+    <rect x="22" y="-8" width="28" height="18" rx="6" fill="#3f74a8"/>
+    <path d="M14 42 l14 14 l28 -32" fill="none" stroke="#3f74a8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- ===== footer strip ===== -->
+  <g filter="url(#softSm)"><rect x="60" y="802" rx="24" ry="24" width="1480" height="66" fill="#fbf3e1"/></g>
+  <rect x="84" y="818" rx="18" ry="18" width="120" height="40" fill="#d2594c"/>
+  <text x="144" y="845" text-anchor="middle" font-size="23" font-weight="700" fill="#ffffff">想一想</text>
+  <text x="232" y="844" font-size="25" fill="#6f5d49">你正在看的那个分数，是不是已经被刷穿、被污染，或者被人专门刷过了？</text>
+</svg>
