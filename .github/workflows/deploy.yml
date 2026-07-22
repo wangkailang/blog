@@ -37,6 +37,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BLOG_REPOSITORY_OWNER: ${{ github.repository_owner }}
           BLOG_REPOSITORY_NAME: ${{ github.event.repository.name }}
+          VITE_BASE_PATH: /
 
       - name: Configure Pages
         uses: actions/configure-pages@v6
